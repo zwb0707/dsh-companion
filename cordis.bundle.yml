@@ -1,0 +1,12 @@
+- insert:
+    - id: moxi
+      name: 'dsh-moxi'
+      config:
+        home: ''
+        gateway:
+          enabled: false
+          baseUrl: 'http://127.0.0.1:3004'
+          wsUrl: 'ws://127.0.0.1:3005'
+        tools:
+          prefix: moxi
+          exposeRuntimeActions: true

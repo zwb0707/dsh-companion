@@ -1,0 +1,45 @@
+{
+  "version": "0.1.0",
+  "home": "",
+  "limits": { "maxCallsPerDay": 600, "maxProactivePerDay": 40, "maxBackgroundPerDay": 200 },
+  "turnGuard": { "maxMs": 180000, "maxSteps": 6, "maxChars": 60000 },
+  "access": {
+    "allow": { "private": ["10001"], "groups": ["800000000"] },
+    "deny": { "private": [], "groups": [] },
+    "strictGroups": true
+  },
+  "gateway": {
+    "enabled": false,
+    "baseUrl": "http://127.0.0.1:3004",
+    "wsUrl": "ws://127.0.0.1:3005",
+    "token": "",
+    "selfId": ""
+  },
+  "send": {
+    "burstEnabled": true,
+    "burstMaxMessages": 8,
+    "intervalMinMs": 900,
+    "intervalMaxMs": 2600,
+    "maxSendPerMinute": 20,
+    "maxSendPerHour": 300
+  },
+  "history": { "enabled": false, "limit": 30 },
+  "mood": {
+    "rates": { "longingPerHour": 8, "insecurityPerHour": 1.8, "anticipationPerHour": 0, "warmthPerHour": -1.6 },
+    "thresholds": { "longing": 42, "insecurity": 55, "anticipation": 45, "calmInsecurity": 50, "warmthShare": 78 }
+  },
+  "wakeBudget": { "privateMaxPerDay": 60, "groupMaxPerDay": 80, "minGapMs": 5000 },
+  "groupCooldownMs": 600000,
+  "purpose": {
+    "enabled": false,
+    "target": "",
+    "dailyMax": 8,
+    "gapMinMs": 1200000,
+    "gapMaxMs": 3600000,
+    "quietStart": "01:00",
+    "quietEnd": "06:00",
+    "tickMs": 300000
+  },
+  "agent": { "provider": "", "model": "", "replyTokens": 512 },
+  "tools": { "prefix": "moxi" }
+}

@@ -1,0 +1,63 @@
+{
+  "name": "dsh-moxi",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Cordis plugin: a local persona runtime for DeepSeek Harness — memory, mood, guards, proactive messages, QQ gateway and 51 tools.",
+  "license": "MIT",
+  "exports": {
+    ".": "./index.mjs",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.mjs",
+    "cordis.bundle.yml",
+    "src",
+    "locale",
+    "icon.svg",
+    "docs",
+    "README.md",
+    "CHANGELOG.md",
+    "scripts",
+    "moxi.config.example.json"
+  ],
+  "engines": {
+    "node": ">=22.13"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "persona",
+    "onebot"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.bundle.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": "*"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "test": "node --test test/",
+    "check": "node --check index.mjs",
+    "import": "node scripts/import-from-runtime.mjs"
+  },
+  "author": "Moxi contributors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OWNER/dsh-moxi.git"
+  },
+  "homepage": "https://github.com/OWNER/dsh-moxi#readme",
+  "bugs": {
+    "url": "https://github.com/OWNER/dsh-moxi/issues"
+  }
+}

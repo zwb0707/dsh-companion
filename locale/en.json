@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Moxi persona runtime",
+    "description": "Local persona runtime: memory, mood, guards, proactive messages and 51 tools, with optional QQ gateway and Douyin integration.",
+    "detail": "docs/DETAIL.md"
+  }
+}
