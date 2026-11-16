@@ -54,10 +54,10 @@
   "author": "Moxi contributors",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OWNER/dsh-moxi.git"
+    "url": "git+https://github.com/zwb0707/dsh-companion.git"
   },
-  "homepage": "https://github.com/OWNER/dsh-moxi#readme",
+  "homepage": "https://github.com/zwb0707/dsh-companion#readme",
   "bugs": {
-    "url": "https://github.com/OWNER/dsh-moxi/issues"
+    "url": "https://github.com/zwb0707/dsh-companion/issues"
   }
 }

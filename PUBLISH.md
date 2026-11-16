@@ -7,15 +7,15 @@
 - `git init -b main` 已执行，38 个文件已 `git add`（**尚未 commit**）
 - `.gitignore` 生效：`data/`、`state/`、`*.sqlite*`、`*.log`、`*.jsonl`、`node_modules/`、`*.tgz` 都不会进仓库
 - `LICENSE`（MIT）、`README.md`、`CHANGELOG.md`、`CONTRIBUTING.md`、`.github/workflows/ci.yml`
-- 发布元数据：`name=dsh-moxi`、`version=0.1.0`、`private=false`、`repository/homepage/bugs`（`OWNER` 待替换）
+- 发布元数据：`name=dsh-moxi`、`version=0.1.0`、`private=false`、`repository/homepage/bugs`（`zwb0707` 待替换）
 - 自检：`node --test test/` → 45/45；`npm pack --dry-run` → 27 文件 / 102.3KB
 
-## 1. 替换仓库地址里的 OWNER
+## 1. 替换仓库地址里的 zwb0707
 
 ```powershell
 cd D:\her\packages\dsh-moxi
 $owner = '你的GitHub账号'
-(Get-Content package.json -Raw).Replace('OWNER', $owner) | Set-Content package.json -NoNewline
+(Get-Content package.json -Raw).Replace('zwb0707', $owner) | Set-Content package.json -NoNewline
 ```
 
 ## 2. 首次提交
