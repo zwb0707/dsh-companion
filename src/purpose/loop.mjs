@@ -8,7 +8,26 @@ import { readJson, writeJson } from '../store.mjs';
 import { scanOutbound } from '../core/guards.mjs';
 
 const DAY = 86400_000;
-const dayKey = (now) => new Date(now).toISOString().slice(0, 10);
+
+/** 指定时区的当天日期键（默认上海，避免跟着宿主机器时区跑） */
+const dayKey = (now, timeZone = 'Asia/Shanghai') => {
+  try {
+    return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(now));
+  } catch { return new Date(now).toISOString().slice(0, 10); }
+};
+
+/** 指定时区的“当天第几分钟”（0..1439） */
+function minutesInZone(now, timeZone) {
+  try {
+    const parts = new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date(now));
+    const h = Number(parts.find((p) => p.type === 'hour')?.value ?? 0) % 24;
+    const m = Number(parts.find((p) => p.type === 'minute')?.value ?? 0);
+    return h * 60 + m;
+  } catch {
+    const d = new Date(now);
+    return d.getHours() * 60 + d.getMinutes();
+  }
+}
 
 function minutesOf(hhmm) {
   const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm ?? ''));
@@ -16,17 +35,17 @@ function minutesOf(hhmm) {
   return Number(m[1]) * 60 + Number(m[2]);
 }
 
-export function inQuietHours(now, quietStart = '01:00', quietEnd = '06:00') {
+export function inQuietHours(now, quietStart = '01:00', quietEnd = '06:00', timeZone = 'Asia/Shanghai') {
   const start = minutesOf(quietStart);
   const end = minutesOf(quietEnd);
   if (start === null || end === null || start === end) return false;
-  const d = new Date(now);
-  const minutes = d.getHours() * 60 + d.getMinutes();
+  const minutes = minutesInZone(now, timeZone);
   return start < end ? (minutes >= start && minutes < end) : (minutes >= start || minutes < end);
 }
 
 export function createPurposeLoop({ dirs, config = {}, memory, mood, agent, gateway, pause, wakeBudget, now = Date.now, log = () => {} }) {
   const stateFile = path.join(dirs.state, 'purpose.json');
+  const timeZone = config.purpose?.timeZone ?? 'Asia/Shanghai';
   const target = config.target ?? (config.access?.allow?.private?.[0] ? `private:${config.access.allow.private[0]}` : '');
   const dailyMax = Number(config.purpose?.dailyMax ?? 8);
   const gapMin = Number(config.purpose?.gapMinMs ?? 20 * 60_000);
@@ -34,7 +53,7 @@ export function createPurposeLoop({ dirs, config = {}, memory, mood, agent, gate
 
   const state = () => {
     const s = readJson(stateFile, {});
-    if (s.day !== dayKey(now())) return { day: dayKey(now()), sentToday: 0, lastAt: 0, history: [] };
+    if (s.day !== dayKey(now(), timeZone)) return { day: dayKey(now(), timeZone), sentToday: 0, lastAt: 0, history: [] };
     return s;
   };
   const save = (s) => { try { writeJson(stateFile, { ...s, history: (s.history ?? []).slice(-30) }); } catch { /* 忽略 */ } };
@@ -45,7 +64,7 @@ export function createPurposeLoop({ dirs, config = {}, memory, mood, agent, gate
     if (!agent?.available) return { ok: false, reason: '没有 llm 服务，不会自己开口' };
     const paused = pause?.() ?? { until: 0 };
     if (Number(paused.until) > now()) return { ok: false, reason: '主动消息已暂停', until: Number(paused.until) };
-    if (inQuietHours(now(), config.purpose?.quietStart, config.purpose?.quietEnd)) return { ok: false, reason: '静默时段' };
+    if (inQuietHours(now(), config.purpose?.quietStart, config.purpose?.quietEnd, timeZone)) return { ok: false, reason: '静默时段' };
     const s = state();
     if (s.sentToday >= dailyMax) return { ok: false, reason: `今日主动已达上限 ${dailyMax}` };
     const gap = Math.min(gapMax, gapMin + Math.random() * (gapMax - gapMin));

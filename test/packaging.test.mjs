@@ -17,14 +17,21 @@ const NPM_CLI = NPM_CANDIDATES.find((p) => fs.existsSync(p));
 const hasNpm = Boolean(NPM_CLI);
 
 function packList() {
-  if (!hasNpm) return { info: { unpackedSize: 0, files: [] }, paths: [], skipped: true };
-  const raw = execFileSync(process.execPath, [NPM_CLI, 'pack', '--dry-run', '--json'], { cwd: PKG, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
-  const info = JSON.parse(raw)[0];
-  return { info, paths: info.files.map((f) => f.path), skipped: false };
+  if (!hasNpm) return { info: { unpackedSize: 0, files: [] }, paths: [], skipped: true, reason: '本机没有 npm cli' };
+  try {
+    const raw = execFileSync(process.execPath, [NPM_CLI, 'pack', '--dry-run', '--json'], { cwd: PKG, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    // npm 不同版本会把 notice/warn 混进 stdout，从第一个 '[' 开始取
+    const start = raw.indexOf('[');
+    if (start < 0) throw new Error('npm pack 没有输出 JSON：' + raw.slice(0, 120));
+    const info = JSON.parse(raw.slice(start))[0];
+    return { info, paths: info.files.map((f) => f.path), skipped: false };
+  } catch (error) {
+    return { info: { unpackedSize: 0, files: [] }, paths: [], skipped: true, reason: 'npm pack 不可用：' + String(error?.message ?? error).slice(0, 160) };
+  }
 }
 
-const { info, paths, skipped } = packList();
-const SKIP = skipped ? '本机没有 npm cli，跳过打包断言' : false;
+const { info, paths, skipped, reason } = packList();
+const SKIP = skipped ? (reason ?? '本机没有 npm cli，跳过打包断言') : false;
 
 test('打包自检可用（npm 存在）', { skip: SKIP }, () => {
   assert.ok(paths.length > 10, '打包文件数异常：' + paths.length);
