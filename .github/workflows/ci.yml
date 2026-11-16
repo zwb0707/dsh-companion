@@ -21,6 +21,6 @@ jobs:
       - name: Syntax check
         run: node --check index.mjs
       - name: Tests
-        run: node --test test/
+        run: node --test "test/*.test.mjs"
       - name: Pack dry-run (files whitelist)
         run: npm pack --dry-run
