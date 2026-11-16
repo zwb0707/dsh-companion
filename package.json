@@ -24,7 +24,7 @@
     "moxi.config.example.json"
   ],
   "engines": {
-    "node": ">=22.13"
+    "node": ">=24"
   },
   "keywords": [
     "dsh-plugin",

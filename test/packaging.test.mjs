@@ -6,8 +6,15 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 const PKG = path.resolve(import.meta.dirname, '..');
-const NPM_CLI = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
-const hasNpm = fs.existsSync(NPM_CLI);
+// npm 的 cli 位置随安装方式不同：官方安装器在 <node>/node_modules，CI 的 setup-node 在 <node>/lib/node_modules
+const NPM_CANDIDATES = [
+  process.env.npm_execpath,
+  path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+  path.join(path.dirname(process.execPath), 'lib', 'node_modules', 'npm', 'bin', 'npm-cli.js'),
+  'C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js',
+].filter(Boolean);
+const NPM_CLI = NPM_CANDIDATES.find((p) => fs.existsSync(p));
+const hasNpm = Boolean(NPM_CLI);
 
 function packList() {
   if (!hasNpm) return { info: { unpackedSize: 0, files: [] }, paths: [], skipped: true };
