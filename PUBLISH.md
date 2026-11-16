@@ -1,22 +1,24 @@
-﻿# 鍙戝竷鎵嬪唽锛堜竴娆℃€т笂浼狅級
+# 发布手册（一次性上传）
 
-浠撳簱灏辨槸 `D:\her\packages\dsh-moxi` 杩欎釜鐩綍鏈韩锛堟彃浠跺寘 = 浠撳簱鏍癸級銆?
-## 0. 涓婁紶鍓嶅凡缁忓氨缁殑涓滆タ
+仓库就是 `D:\her\packages\dsh-moxi` 这个目录本身（插件包 = 仓库根）。
 
-- `git init -b main` 宸叉墽琛岋紝38 涓枃浠跺凡 `git add`锛?*灏氭湭 commit**锛?- `.gitignore` 鐢熸晥锛歚data/`銆乣state/`銆乣*.sqlite*`銆乣*.log`銆乣*.jsonl`銆乣node_modules/`銆乣*.tgz` 閮戒笉浼氳繘浠撳簱
-- `LICENSE`锛圡IT锛夈€乣README.md`銆乣CHANGELOG.md`銆乣CONTRIBUTING.md`銆乣.github/workflows/ci.yml`
-- 鍙戝竷鍏冩暟鎹細`name=dsh-moxi`銆乣version=0.1.0`銆乣private=false`銆乣repository/homepage/bugs`锛坄zwb0707` 寰呮浛鎹級
-- 鑷锛歚node --test "test/*.test.mjs"` 鈫?45/45锛沗npm pack --dry-run` 鈫?27 鏂囦欢 / 102.3KB
+## 0. 上传前已经就绪的东西
 
-## 1. 鏇挎崲浠撳簱鍦板潃閲岀殑 zwb0707
+- `git init -b main` 已执行，38 个文件已 `git add`（**尚未 commit**）
+- `.gitignore` 生效：`data/`、`state/`、`*.sqlite*`、`*.log`、`*.jsonl`、`node_modules/`、`*.tgz` 都不会进仓库
+- `LICENSE`（MIT）、`README.md`、`CHANGELOG.md`、`CONTRIBUTING.md`、`.github/workflows/ci.yml`
+- 发布元数据：`name=dsh-moxi`、`version=0.1.0`、`private=false`、`repository/homepage/bugs`（`zwb0707` 待替换）
+- 自检：`node --test "test/*.test.mjs"` → 45/45；`npm pack --dry-run` → 27 文件 / 102.3KB
+
+## 1. 替换仓库地址里的 zwb0707
 
 ```powershell
 cd D:\her\packages\dsh-moxi
-$owner = '浣犵殑GitHub璐﹀彿'
+$owner = '你的GitHub账号'
 (Get-Content package.json -Raw).Replace('zwb0707', $owner) | Set-Content package.json -NoNewline
 ```
 
-## 2. 棣栨鎻愪氦
+## 2. 首次提交
 
 ```powershell
 cd D:\her\packages\dsh-moxi
@@ -24,29 +26,39 @@ git add -A
 git -c user.name="Moxi contributors" -c user.email="noreply@example.com" commit -m "feat: initial dsh-moxi plugin (51 tools, gateway, agent turn, purpose loop)"
 ```
 
-## 3. 寤鸿繙绔苟鎺ㄩ€?
+## 3. 建远端并推送
+
 ```powershell
-# 鍏堝湪 GitHub 涓婂缓绌轰粨搴?dsh-moxi锛堜笉瑕佸甫 README/License锛岄伩鍏嶅啿绐侊級
+# 先在 GitHub 上建空仓库 dsh-moxi（不要带 README/License，避免冲突）
 git remote add origin https://github.com/<owner>/dsh-moxi.git
 git push -u origin main
 ```
 
-鐢?SSH 鐨勮瘽鎶?`origin` 鎹㈡垚 `git@github.com:<owner>/dsh-moxi.git`銆?
-## 4. 涓婁紶鍚庢牳瀵?
-1. GitHub 涓?`Actions 鈫?ci` 璺戠豢锛坲buntu + windows 脳 node 22锛歚node --check` 鈫?`node --test` 鈫?`npm pack --dry-run`锛夈€?2. 浠撳簱閲屾悳 `D:\her`銆乣3030887571`銆乣绠浮鏈坄锛氬簲涓?0 鍛戒腑锛坄test/packaging.test.mjs` 宸叉湰鍦版柇瑷€锛夈€?3. 椤甸潰涓娿€孉bout銆嶅～鎻忚堪 + 鍕鹃€?MIT license锛堝厓鏁版嵁宸插甫锛夈€?
-## 5. 瑁呭埌 DSH 楠屾敹锛堝彂甯冨悗锛?
+用 SSH 的话把 `origin` 换成 `git@github.com:<owner>/dsh-moxi.git`。
+
+## 4. 上传后核对
+
+1. GitHub 上 `Actions → ci` 跑绿（ubuntu + windows × node 22：`node --check` → `node --test` → `npm pack --dry-run`）。
+2. 仓库里搜 `D:\her`、`3030887571`、`箫渡月`：应为 0 命中（`test/packaging.test.mjs` 已本地断言）。
+3. 页面上「About」填描述 + 勾选 MIT license（元数据已带）。
+
+## 5. 装到 DSH 验收（发布后）
+
 ```powershell
-# 鏈湴鐩綍瀹夎锛欴SH 鈫?鎻掍欢 鈫?娣诲姞鎻掍欢 鈫?閫?D:\her\packages\dsh-moxi
-# 鎴栦粠 npm锛歞sh plugin add dsh-moxi
+# 本地目录安装：DSH → 插件 → 添加插件 → 选 D:\her\packages\dsh-moxi
+# 或从 npm：dsh plugin add dsh-moxi
 ```
 
-瑁呭畬鍚庣‘璁わ細
+装完后确认：
 
-- 宸ュ叿鍒楄〃閲屽嚭鐜?51 涓?`moxi_*`
-- `moxi_health` 鑳芥姤鍑哄悇椤规帴绾跨姸鎬侊紙QQ 缃戝叧/澶ц剳/鎶栭煶/鑱旂綉锛?- **鍒囨崲鏃跺厛鍋滅敤鏃?`@local/her-douyin`**锛屽惁鍒欏畠鐨?50 涓悓鍚?`moxi_*` 浼氳窡鏂版彃浠舵墦鏋?
-## 6. 涔嬪悗鍙戠増
+- 工具列表里出现 51 个 `moxi_*`
+- `moxi_health` 能报出各项接线状态（QQ 网关/大脑/抖音/联网）
+- **切换时先停用旧 `@local/her-douyin`**，否则它的 50 个同名 `moxi_*` 会跟新插件打架
+
+## 6. 之后发版
 
 ```powershell
-# 鏀?version锛堣涔夊寲锛夛紝鍐?CHANGELOG锛岀劧鍚?npm publish --access public
+# 改 version（语义化），写 CHANGELOG，然后
+npm publish --access public
 git tag v0.1.0 && git push --tags
 ```
